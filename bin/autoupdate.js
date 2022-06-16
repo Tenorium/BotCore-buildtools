@@ -1,10 +1,18 @@
 import AutoGitUpdate from "auto-git-update";
 import clear from "clear";
 import colors from "colors";
+import * as path from "path";
+import {ThrottleGroup} from "speed-limiter";
+import * as os from "os";
 
 const SpinnerClass = (await import("clui")).default.Spinner;
 
 export const checkUpdates = async function() {
+    let rate = 1; //B/s
+    let throttleGroup = new ThrottleGroup({rate});
+
+    throttleGroup.throttle();
+
     let spinner = new SpinnerClass("Checking updates...");
     spinner.start();
 
@@ -13,8 +21,9 @@ export const checkUpdates = async function() {
      * @type {Config}
      */
     let config = {
-        repository: "https://github.com/Tenorium/BotCore.git",
-        branch: "latest"
+        repository: "https://github.com/Tenorium/BotCore-buildtools",
+        branch: "latest",
+        tempLocation: path.join(os.tmpdir(), 'botcore-buildtools')
     };
 
     let updater = new AutoGitUpdate(config);
@@ -28,4 +37,6 @@ export const checkUpdates = async function() {
             console.log(`Updates installed ${colors.green("SUCCESSFULLY")}`);
         }
     }
+
+    spinner.stop();
 }
