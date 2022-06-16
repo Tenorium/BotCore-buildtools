@@ -1,6 +1,8 @@
 import AutoGitUpdate from "auto-git-update";
-import clear from "clear";
-import colors from "colors";
+import * as path from "path";
+import * as os from "os";
+import pkg from 'colors/safe.js';
+const {green, red} = pkg;
 
 const SpinnerClass = (await import("clui")).default.Spinner;
 
@@ -13,8 +15,9 @@ export const checkUpdates = async function() {
      * @type {Config}
      */
     let config = {
-        repository: "https://github.com/Tenorium/BotCore.git",
-        branch: "latest"
+        repository: "https://github.com/Tenorium/BotCore-buildtools",
+        branch: "latest",
+        tempLocation: path.join(os.tmpdir(), 'botcore-buildtools')
     };
 
     let updater = new AutoGitUpdate(config);
@@ -24,8 +27,12 @@ export const checkUpdates = async function() {
         let result = updater.forceUpdate();
         if (result) {
             spinner.stop();
-            clear();
-            console.log(`Updates installed ${colors.green("SUCCESSFULLY")}`);
+            console.log(`Updates installed ${green("SUCCESSFULLY")}`);
+        } else {
+            spinner.stop();
+            console.log(`Updates install ${red("ERROR")}`);
         }
     }
+
+    spinner.stop();
 }
