@@ -27,7 +27,6 @@ export const checkUpdates = async function() {
         let result = updater.forceUpdate();
         if (result) {
             spinner.stop();
-            console.log(`Updates installed ${green("SUCCESSFULLY")}`);
         } else {
             spinner.stop();
             console.log(`Updates install ${red("ERROR")}`);
